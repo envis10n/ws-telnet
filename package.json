@@ -1,0 +1,23 @@
+{
+    "name": "ws-telnet",
+    "version": "0.0.1",
+    "description": "Telnet protocol over WebSockets",
+    "main": "build/index.js",
+    "types": "build",
+    "scripts": {
+        "build": "tsc"
+    },
+    "author": "envis10n <envis10n@protonmail.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^13.9.2",
+        "@types/uuid": "^7.0.2",
+        "@types/ws": "^7.2.3",
+        "typescript": "^3.8.3"
+    },
+    "dependencies": {
+        "ee-ts": "^1.0.1",
+        "uuid": "^7.0.2",
+        "ws": "^7.2.3"
+    }
+}
