@@ -1,3 +1,3 @@
 # ws-telnet
 
-## Telnet protocol over WebSockets
+Telnet protocol over WebSockets
