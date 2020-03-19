@@ -1,6 +1,9 @@
 {
     "name": "ws-telnet",
     "version": "0.0.1",
+    "repository": "https://github.com/envis10n/ws-telnet",
+    "bugs": "https://github.com/envis10n/ws-telnet/issues",
+    "homepage": "https://github.com/envis10n/ws-telnet",
     "description": "Telnet protocol over WebSockets",
     "main": "build/index.js",
     "types": "build",
@@ -16,7 +19,6 @@
         "typescript": "^3.8.3"
     },
     "dependencies": {
-        "ee-ts": "^1.0.1",
         "uuid": "^7.0.2",
         "ws": "^7.2.3"
     }
