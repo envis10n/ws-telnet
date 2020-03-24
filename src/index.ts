@@ -78,6 +78,16 @@ class WST extends EventEmitter {
         }
         this.sendTelnet(_Telnet.TelnetNegotiation.SB, option, data);
     }
+    public sendGMCP(namespace: string, data: string): void;
+    public sendGMCP(namespace: string, data: { [key: string]: any }): void;
+    public sendGMCP(namespace: string, data: { [key: string]: any } | string): void {
+        if (!this.options.HasOption(_Telnet.TelnetOption.GMCP)) return;
+        if (typeof data === "object") {
+            // Convert object to JSON.
+            data = JSON.stringify(data);
+        }
+        this.sendSubnegotiation(_Telnet.TelnetOption.GMCP, `${namespace} ${data}`);
+    }
     public will(option: _Telnet.TelnetOption): void {
         if (this.options.GetState(option) === _Telnet.TelnetOptionState.DISABLED) {
             this.options.SetState(option, _Telnet.TelnetOptionState.WAITING);
@@ -124,6 +134,22 @@ class WST extends EventEmitter {
             switch (event.command) {
                 case _Telnet.TelnetNegotiation.SB:
                     this.emit("subnegotiation", event.option, event.data || Buffer.alloc(0));
+                    if (event.option === _Telnet.TelnetOption.GMCP && event.data !== undefined) {
+                        // Process GMCP
+                        const d = event.data.toString();
+                        let offset = d.indexOf(" ", 0);
+                        if (offset === -1) offset = d.length;
+                        const namespace = d.substring(0, offset);
+                        const objString = offset !== d.length ? d.substring(offset + 1, d.length) : "";
+                        if (objString.length > 0) {
+                            try {
+                                const obj = JSON.parse(objString);
+                                this.emit("gmcp", namespace, obj);
+                            } catch {
+                                this.emit("gmcp", namespace, { data: objString });
+                            }
+                        }
+                    }
                     break;
                 case _Telnet.TelnetNegotiation.WILL:
                     if (this.options.GetState(event.option) === _Telnet.TelnetOptionState.WAITING) {
@@ -170,6 +196,7 @@ class WST extends EventEmitter {
     public on(event: "subnegotiation", listener: (option: number, data: Buffer) => void): this;
     public on(event: "telnet", listener: (ev: _Telnet.TelnetEvent) => void): this;
     public on(event: "open", listener: () => void): this;
+    public on(event: "gmcp", listener: (namespace: string, data: { [key: string]: any }) => void): this;
     public on(event: string, listener: (...args: any) => void): this {
         return super.on(event, listener);
     }
@@ -181,6 +208,7 @@ class WST extends EventEmitter {
     public emit(event: "subnegotiation", option: number, data: Buffer): boolean;
     public emit(event: "telnet", ev: _Telnet.TelnetEvent): boolean;
     public emit(event: "open"): boolean;
+    public emit(event: "gmcp", namespace: string, data: { [key: string]: any }): boolean;
     public emit(event: string, ...args: any): boolean {
         return super.emit(event, ...args);
     }
