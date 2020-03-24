@@ -8,7 +8,8 @@
     "main": "build/index.js",
     "types": "build",
     "scripts": {
-        "build": "tsc"
+        "build": "tsc && typedoc",
+        "docs": "typedoc"
     },
     "author": "envis10n <envis10n@protonmail.com>",
     "license": "MIT",
@@ -16,6 +17,7 @@
         "@types/node": "^13.9.2",
         "@types/uuid": "^7.0.2",
         "@types/ws": "^7.2.3",
+        "typedoc": "^0.17.3",
         "typescript": "^3.8.3"
     },
     "dependencies": {
