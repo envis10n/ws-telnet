@@ -112,6 +112,10 @@ class WST extends EventEmitter {
             this.sendTelnet(_Telnet.TelnetNegotiation.DONT, option);
         }
     }
+    public goAhead(): void {
+        if (!this.options.HasOption(_Telnet.TelnetOption.SUPPRESS_GO_AHEAD))
+            this.send(Buffer.from([_Telnet.TelnetNegotiation.IAC, _Telnet.TelnetNegotiation.GA]));
+    }
     public prompt(message: string, mask: boolean = false): Promise<string> {
         if (mask) {
             this.dont(_Telnet.TelnetOption.ECHO);
@@ -124,6 +128,7 @@ class WST extends EventEmitter {
                 resolve(data);
             };
             this.send(message);
+            this.goAhead();
         });
     }
     private HandleData(data: Buffer) {

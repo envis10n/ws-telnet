@@ -17,6 +17,8 @@ namespace Telnet {
         SE = 240,
         IS = 0,
         SEND = 1,
+        /** Go Ahead */
+        GA = 249,
     }
 
     export enum TelnetOption {
