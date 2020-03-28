@@ -36,7 +36,12 @@ class WST extends EventEmitter {
     public send(data: Buffer): void;
     public send(data: string): void;
     public send(data: Buffer | string): void {
-        this.socket.send(data);
+        if (data instanceof Buffer)
+            this.socket.send(data);
+        else {
+            this.socket.send(data);
+            this.goAhead();
+        }
     }
     private sendTelnet(command: _Telnet.TelnetNegotiation, option: _Telnet.TelnetOption, data?: Buffer): void {
         switch (command) {
@@ -113,7 +118,7 @@ class WST extends EventEmitter {
         }
     }
     public goAhead(): void {
-        if (!this.options.HasOption(_Telnet.TelnetOption.SUPPRESS_GO_AHEAD))
+        if (this.options.GetState(_Telnet.TelnetOption.SUPPRESS_GO_AHEAD) === _Telnet.TelnetOptionState.DISABLED)
             this.send(Buffer.from([_Telnet.TelnetNegotiation.IAC, _Telnet.TelnetNegotiation.GA]));
     }
     public prompt(message: string, mask: boolean = false): Promise<string> {
@@ -128,7 +133,6 @@ class WST extends EventEmitter {
                 resolve(data);
             };
             this.send(message);
-            this.goAhead();
         });
     }
     private HandleData(data: Buffer) {
